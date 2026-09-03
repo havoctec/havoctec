@@ -202,7 +202,7 @@ A small playable game — flip cards, match our stack, beat your best time.
 
 </div>
 
-The game file (`havoc-stack-match.html`) and the button image (`play-button.svg`) are both included alongside this README — add both to the repo root and turn on GitHub Pages so the button above opens a live, playable page.
+The button above opens a live, playable page.
 
 ---
 

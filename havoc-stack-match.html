@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Havoc Tec Solutions — Stack Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0b1220;
+    --panel:#121b2e;
+    --panel-border:#223350;
+    --accent-blue:#2f8fd1;
+    --accent-teal:#3ed9a6;
+    --accent-amber:#f2b84b;
+    --text-primary:#e8eef7;
+    --text-muted:#7c8aa0;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(47,143,209,0.10), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(62,217,166,0.08), transparent 45%),
+      var(--bg-deep);
+    color:var(--text-primary);
+    font-family:'Inter', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+
+  .window{
+    width:100%;
+    max-width:560px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
+  }
+
+  .chrome{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 16px;
+    background:#0e1626;
+    border-bottom:1px solid var(--panel-border);
+  }
+
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.r{ background:#e56a6a; }
+  .dot.y{ background:#e8c05a; }
+  .dot.g{ background:#5ac98a; }
+
+  .filename{
+    margin-left:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+
+  .header{
+    padding:22px 24px 6px;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--accent-teal);
+    margin:0 0 6px;
+  }
+
+  h1{
+    font-family:'JetBrains Mono', monospace;
+    font-size:20px;
+    font-weight:700;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+
+  .sub{
+    font-size:13.5px;
+    color:var(--text-muted);
+    margin:0 0 18px;
+    line-height:1.5;
+    max-width:46ch;
+  }
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+    padding:4px 24px 22px;
+  }
+
+  .card{
+    position:relative;
+    aspect-ratio:1/1;
+    cursor:pointer;
+    perspective:600px;
+  }
+
+  .card-inner{
+    position:absolute;
+    inset:0;
+    transform-style:preserve-3d;
+    transition:transform 0.45s cubic-bezier(.4,.2,.2,1);
+  }
+
+  .card.flipped .card-inner,
+  .card.matched .card-inner{
+    transform:rotateY(180deg);
+  }
+
+  .face{
+    position:absolute;
+    inset:0;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    backface-visibility:hidden;
+  }
+
+  .face.back{
+    background:#0e1626;
+    border:1px solid var(--panel-border);
+    font-family:'JetBrains Mono', monospace;
+    color:var(--accent-blue);
+    font-size:15px;
+  }
+
+  .card:hover .face.back{
+    border-color:var(--accent-blue);
+  }
+
+  .face.front{
+    background:#0a1220;
+    border:1px solid var(--panel-border);
+    transform:rotateY(180deg);
+    flex-direction:column;
+    gap:6px;
+    padding:6px;
+  }
+
+  .card.matched .face.front{
+    border-color:var(--accent-teal);
+    background:rgba(62,217,166,0.08);
+  }
+
+  .face.front img{
+    width:60%;
+    height:60%;
+    object-fit:contain;
+  }
+
+  .face.front span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    color:var(--text-muted);
+  }
+
+  .statusbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 20px;
+    background:#0e1626;
+    border-top:1px solid var(--panel-border);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+  }
+
+  .stats{
+    display:flex;
+    gap:16px;
+    color:var(--text-muted);
+  }
+
+  .stats b{
+    color:var(--text-primary);
+    font-weight:600;
+  }
+
+  .stats .best b{ color:var(--accent-amber); }
+
+  button.restart{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--accent-blue);
+    background:transparent;
+    border:1px solid var(--accent-blue);
+    border-radius:6px;
+    padding:7px 12px;
+    cursor:pointer;
+  }
+
+  button.restart:hover{
+    background:rgba(47,143,209,0.12);
+  }
+
+  .message{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--accent-teal);
+    text-align:center;
+    padding:0 20px 14px;
+    min-height:1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="window">
+  <div class="chrome">
+    <span class="dot r"></span>
+    <span class="dot y"></span>
+    <span class="dot g"></span>
+    <span class="filename">havoc-stack-match.sh</span>
+  </div>
+
+  <div class="header">
+    <p class="eyebrow">// mini game</p>
+    <h1>Stack Match</h1>
+    <p class="sub">Flip two tiles at a time and match every tool in our stack. Fewer moves, faster time.</p>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <p class="message" id="message"></p>
+
+  <div class="statusbar">
+    <div class="stats">
+      <span>moves <b id="moves">0</b></span>
+      <span>time <b id="time">0s</b></span>
+      <span class="best">best <b id="best">—</b></span>
+    </div>
+    <button class="restart" id="restart">$ restart</button>
+  </div>
+</div>
+
+<script>
+  const ICONS = ["react","flutter","nextjs","tailwind","django","nodejs","firebase","mongodb"];
+
+  const board = document.getElementById('board');
+  const movesEl = document.getElementById('moves');
+  const timeEl = document.getElementById('time');
+  const bestEl = document.getElementById('best');
+  const messageEl = document.getElementById('message');
+  const restartBtn = document.getElementById('restart');
+
+  let flipped = [];
+  let matchedCount = 0;
+  let moves = 0;
+  let seconds = 0;
+  let timerId = null;
+  let timerStarted = false;
+  let bestMoves = null;
+  let lock = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startTimer(){
+    if(timerStarted) return;
+    timerStarted = true;
+    timerId = setInterval(() => {
+      seconds += 1;
+      timeEl.textContent = seconds + 's';
+    }, 1000);
+  }
+
+  function stopTimer(){
+    clearInterval(timerId);
+    timerStarted = false;
+  }
+
+  function buildBoard(){
+    stopTimer();
+    seconds = 0;
+    moves = 0;
+    matchedCount = 0;
+    flipped = [];
+    lock = false;
+    timeEl.textContent = '0s';
+    movesEl.textContent = '0';
+    messageEl.textContent = '';
+
+    const deck = shuffle([...ICONS, ...ICONS]);
+    board.innerHTML = '';
+
+    deck.forEach((icon) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.icon = icon;
+
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="face back">&gt;_</div>
+          <div class="face front">
+            <img src="https://skillicons.dev/icons?i=${icon}" alt="${icon}" />
+            <span>${icon}</span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => handleFlip(card));
+      board.appendChild(card);
+    });
+  }
+
+  function handleFlip(card){
+    if(lock) return;
+    if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+    startTimer();
+    card.classList.add('flipped');
+    flipped.push(card);
+
+    if(flipped.length === 2){
+      moves += 1;
+      movesEl.textContent = moves;
+      lock = true;
+
+      const [a, b] = flipped;
+      if(a.dataset.icon === b.dataset.icon){
+        setTimeout(() => {
+          a.classList.add('matched');
+          b.classList.add('matched');
+          matchedCount += 2;
+          flipped = [];
+          lock = false;
+          if(matchedCount === ICONS.length * 2){
+            onWin();
+          }
+        }, 350);
+      } else {
+        setTimeout(() => {
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          lock = false;
+        }, 700);
+      }
+    }
+  }
+
+  function onWin(){
+    stopTimer();
+    let newBest = false;
+    if(bestMoves === null || moves < bestMoves){
+      bestMoves = moves;
+      bestEl.textContent = bestMoves + ' mv';
+      newBest = true;
+    }
+    messageEl.textContent = newBest
+      ? `solved in ${moves} moves / ${seconds}s — new best!`
+      : `solved in ${moves} moves / ${seconds}s`;
+  }
+
+  restartBtn.addEventListener('click', buildBoard);
+
+  buildBoard();
+</script>
+
+</body>
+</html>

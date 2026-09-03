@@ -197,7 +197,7 @@ A small playable game — flip cards, match our stack, beat your best time.
 <div align="center">
 
 <a href="https://havoctec.github.io/havoctec/havoc-stack-match.html">
-  <img src="https://raw.githubusercontent.com/havoctec/havoctec/main/play-button.svg" alt="Play Stack Match" />
+  <img src="https://cdn.jsdelivr.net/gh/havoctec/havoctec@main/play-button.svg" alt="Play Stack Match" />
 </a>
 
 </div>

@@ -156,7 +156,7 @@ We help turn ideas into real products — from **concept and UI/UX to developmen
 <img src="https://raw.githubusercontent.com/havoctec/havoctec/output/github-contribution-grid-snake-dark.svg" alt="Contribution snake animation" />
 </div>
 
-This animates your contribution graph as a snake eating each square. It needs a one-time GitHub Actions setup — see **`snake.yml`** in the files shared alongside this README for the workflow to drop into `.github/workflows/`.
+This animates your contribution graph as a snake eating each square.
 
 ---
 

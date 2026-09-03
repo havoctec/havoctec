@@ -148,8 +148,6 @@ We help turn ideas into real products — from **concept and UI/UX to developmen
 
 </div>
 
-> Replace `havoctec` in the badge URLs above with your exact GitHub username if it differs, so the stats point at the right account.
-
 ---
 
 ## 🐍 Contribution Snake
@@ -199,12 +197,12 @@ A small playable game — flip cards, match our stack, beat your best time.
 <div align="center">
 
 <a href="https://havoctec.github.io/havoctec/havoc-stack-match.html">
-  <img src="https://img.shields.io/badge/🎮_Play-Tech_Stack_Memory_Match-0E75B6?style=for-the-badge" />
+  <img src="https://raw.githubusercontent.com/havoctec/havoctec/main/play-button.svg" alt="Play Stack Match" />
 </a>
 
 </div>
 
-The game file (`havoc-stack-match.html`) is included alongside this README — see the setup note below for how to make the badge above link to a live, playable page.
+The game file (`havoc-stack-match.html`) and the button image (`play-button.svg`) are both included alongside this README — add both to the repo root and turn on GitHub Pages so the button above opens a live, playable page.
 
 ---
 
